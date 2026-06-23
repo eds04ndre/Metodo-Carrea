@@ -11,8 +11,8 @@ library(readxl)
 
 # ==================== 1. CARGA DE DATOS ====================
 setwd("C:/Users/ASUS/Documents/Edson/Servicio Social/Repositorio")
-estatura <- read_excel("Datos_Estatura.xlsx")
-observadores <- read_excel("Datos_observadores.xlsx")
+estatura <- read_excel("data/Datos_Estatura.xlsx")
+observadores <- read_excel("data/Datos_observadores.xlsx")
 
 cat("  - Estatura: ", nrow(estatura), " filas\n")
 cat("  - Observadores: ", nrow(observadores), " filas\n\n")
@@ -170,4 +170,4 @@ total_invalidos <- val_1$invalidos + val_2$invalidos + val_3$invalidos + val_4$i
 
 
 # Guardar csv
-# write.csv(observadores, "datos_limpios_validados.csv", row.names = FALSE)
+# write.csv(observadores, "data/datos_limpios_validados.csv", row.names = FALSE)

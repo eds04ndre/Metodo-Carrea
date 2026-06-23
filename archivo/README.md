@@ -4,11 +4,11 @@ Scripts exploratorios del trabajo previo, **superados por el pipeline corregido*
 de la raíz del repositorio. Se conservan como registro histórico y porque algunas
 tablas del reporte (`reporte/Etapa3_ProyectoII.tex`) provienen de aquí.
 
-> ⚠️ No están actualizados a la nueva estructura de carpetas (`data/`,
-> `resultados/`): sus rutas (`read.csv("datos_unidos.csv")`, `setwd(...)`, etc.)
-> apuntan al layout plano anterior y a `datos_unidos.csv`, que fue eliminado y
-> reemplazado por `resultados/datos_unidos_corregido.csv`. Para volver a correrlos
-> habría que ajustar rutas.
+> ℹ️ Las rutas **ya fueron actualizadas** a la nueva estructura (`data/`,
+> `resultados/`). Ejecutar desde la **raíz del repositorio**. Los scripts que
+> usaban `datos_unidos.csv` ahora leen `resultados/datos_unidos_corregido.csv`
+> (la base corregida, n=49 sin los falsos duplicados), por lo que sus resultados
+> **diferirán de los del reporte original** basado en la base de 54.
 
 | Script | Propósito |
 |---|---|

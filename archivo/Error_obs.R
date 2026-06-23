@@ -1,5 +1,5 @@
 library(readxl)
-datos <- read_excel("C:/Users/ASUS/Documents/Edson/Servicio Social/Datos_observadores.xlsx", sheet = "General_T")
+datos <- read_excel("data/Datos_observadores.xlsx", sheet = "General_T")  # ejecutar desde la raíz del repo
 #Solo esta para m 11 
 # datos<-subset(datos,Evaluador==1|Evaluador==2)
 names(datos)

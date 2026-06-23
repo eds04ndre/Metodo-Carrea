@@ -8,7 +8,7 @@ library(dplyr)
 # Datos
 # ----------------------------------------------------------------
 setwd("C:/Users/ASUS/Documents/Edson/Servicio Social/Repositorio/")
-df <- readxl::read_excel("Mediciones_Estatura.xlsx", sheet = "Editado") %>%
+df <- readxl::read_excel("data/Mediciones_Estatura.xlsx", sheet = "Editado") %>%
   rename(
     n_modelo  = `N Modelo`,
     sexo      = Sexo,

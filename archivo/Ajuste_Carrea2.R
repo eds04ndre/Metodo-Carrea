@@ -2,7 +2,9 @@ library(dplyr)
 
 
 setwd("C:/Users/ASUS/Documents/Edson/Servicio Social/Repositorio/")
-du <- read.csv("datos_unidos.csv",
+# NOTA: datos_unidos.csv fue reemplazado por la base corregida (n=49, sin los
+# falsos duplicados). Los resultados diferirán de los del reporte original.
+du <- read.csv("resultados/datos_unidos_corregido.csv",
                stringsAsFactors = FALSE, check.names = FALSE)
 
 h4 <- du %>% filter(mm_41 != 0, mm_42 != 0, mm_43 != 0, !is.na(Estatura)) %>%

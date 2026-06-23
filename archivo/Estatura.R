@@ -1,6 +1,6 @@
 library(readxl)
-datos <- read_excel("C:/Users/ASUS/Documents/Edson/Servicio Social/Datos_observadores.xlsx", sheet = "General_T")
-estatura_real <- read_excel("Datos_Estatura.xlsx")
+datos <- read_excel("data/Datos_observadores.xlsx", sheet = "General_T")  # ejecutar desde la raíz del repo
+estatura_real <- read_excel("data/Datos_Estatura.xlsx")
 #Solo esta para m 11 
 na<-names(datos)
 data<-subset(datos,Evaluador==1&Instrumento=="Vernier")

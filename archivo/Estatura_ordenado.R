@@ -7,8 +7,8 @@ library(dplyr)
 
 setwd("C:/Users/ASUS/Documents/Edson/Servicio Social/Repositorio/")
 
-RUTA_DATOS    <- "C:/Users/ASUS/Documents/Edson/Servicio Social/Datos_observadores.xlsx"
-RUTA_ESTATURA <- "Datos_Estatura.xlsx"
+RUTA_DATOS    <- "data/Datos_observadores.xlsx"
+RUTA_ESTATURA <- "data/Datos_Estatura.xlsx"
 
 EVALUADORES   <- c(1, 2, 3)
 INSTRUMENTOS  <- c("Vernier", "Calibrador")

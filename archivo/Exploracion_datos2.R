@@ -13,7 +13,7 @@ library(dplyr)
 # En un entorno con readxl instalado, usar:
 
 setwd("C:/Users/ASUS/Documents/Edson/Servicio Social/Repositorio/")
-df <- readxl::read_excel("Mediciones_Estatura.xlsx", sheet = "Editado")
+df <- readxl::read_excel("data/Mediciones_Estatura.xlsx", sheet = "Editado")
 
 # df <- read.csv("/home/claude/mediciones.csv", stringsAsFactors = FALSE, check.names = FALSE)
 
@@ -248,6 +248,6 @@ tabla_final <- resultados %>%
          dentro_alguna, dentro_todas) %>%
   mutate(across(where(is.numeric), ~round(., 4)))
 
-write.csv(tabla_final, "resultados_carrea.csv", row.names = FALSE)
-cat("Tabla exportada a: resultados_carrea.csv\n")
+write.csv(tabla_final, "resultados/resultados_carrea.csv", row.names = FALSE)
+cat("Tabla exportada a: resultados/resultados_carrea.csv\n")
 

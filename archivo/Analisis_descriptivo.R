@@ -5,9 +5,11 @@ setwd("C:/Users/ASUS/Documents/Edson/Servicio Social/Repositorio/")
 # 1. Carga
 # ----------------------------------------------------------------
 
-du <- read.csv("datos_unidos.csv",
+# NOTA: datos_unidos.csv fue reemplazado por la base corregida (n=49, sin los
+# falsos duplicados). Los resultados diferirán de los del reporte original.
+du <- read.csv("resultados/datos_unidos_corregido.csv",
                stringsAsFactors = FALSE, check.names = FALSE)
-ae <- read.csv("Anexo_E.csv",
+ae <- read.csv("data/Anexo_E.csv",
                stringsAsFactors = FALSE, check.names = FALSE)
 
 names(ae) <- trimws(names(ae))

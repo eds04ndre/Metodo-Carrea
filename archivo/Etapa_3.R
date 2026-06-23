@@ -10,7 +10,10 @@ library(tidyr)
 # Datos
 # ----------------------------------------------------------------
 
-du <- read.csv("datos_unidos.csv",
+# NOTA: datos_unidos.csv fue reemplazado por la base corregida (n=49, sin los
+# falsos duplicados). Los resultados diferirán de los del reporte original.
+# Para la versión vigente de este análisis ver ../Etapa_3_corregido.R
+du <- read.csv("resultados/datos_unidos_corregido.csv",
                stringsAsFactors = FALSE, check.names = FALSE)
 
 # ----------------------------------------------------------------
