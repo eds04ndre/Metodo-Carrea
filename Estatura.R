@@ -100,3 +100,4 @@ data1$T_Max43_41<-((data1$arco43_41)*(60)*(3.1416))/2
 data1$Dentro_Rango <- data1$Estatura >= data1$T_Min43_41/1000 & 
                       data1$Estatura <= data1$T_Max43_41/1000
 
+plot(data$)

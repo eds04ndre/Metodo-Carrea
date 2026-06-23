@@ -1,0 +1,387 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+
+%----- Configuración del estilo del documento------%
+\usepackage{epsfig,graphicx}
+\usepackage[left=2cm,right=2cm,top=1.8cm,bottom=2.3cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\pagestyle{fancy}
+\fancyhf{}
+\rfoot{\textit{Página \thepage \hspace{1pt} de \pageref{LastPage}}}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{12pt}
+
+%------ Paquetes matemáticos básicos --------%
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\title{Estimación de la estatura utilizando medidas interdentales}
+
+\begin{document}
+
+%------ Encabezado --------%
+
+\begin{center}
+    \begin{minipage}{3cm}
+        \begin{center}
+            \includegraphics[height=3.4cm]{logo_unam.png}
+        \end{center}
+    \end{minipage}\hfill
+    \begin{minipage}{10cm}
+        \begin{center}
+        \textbf{\large Universidad Nacional Autónoma de México}\\[0.1cm]
+        \textbf{Facultad de Ciencias}\\[0.1cm]
+        \textbf{Proyecto II}\\[0.1cm]
+        Etapa 2\\[0.1cm]
+        Cortés Silva Edson André\\[0.1cm]
+        \today
+        \end{center}
+    \end{minipage}\hfill
+    \begin{minipage}{3cm}
+        \begin{center}
+            \includegraphics[height=3.4cm]{Logo_FC.png}
+        \end{center}
+    \end{minipage}
+\end{center}
+
+\rule{17cm}{0.1mm}
+
+%------ Fin de encabezado --------%
+\begin{center}
+    \textbf{\LARGE{Estimación de la estatura utilizando medidas interdentales}}\\
+    \Large{Evaluación de la validez del método de Carrea en la población mexicana}
+\end{center}
+
+%------ Pregunta de investigación --------%
+\section*{Pregunta de investigación}
+¿Es el método para estimar la estatura utilizando medidas interdentales propuesto por el Dr. Ubaldo Carrea válido para estimar la altura de la población mexicana?
+
+\section*{Objetivo}
+
+Evaluar la precisión y confiabilidad del método odontométrico de Carrea para estimar la talla en población mexicana y desarrollar, en caso necesario, un modelo de estimación adaptado a las características antropométricas de esta población.
+
+\subsection*{Objetivos específicos}
+\begin{itemize}
+    \item Aplicar el método de Carrea a los incisivos y el canino de cada
+    hemiarcada inferior para obtener las estimaciones de talla mínima
+    ($T_{\min}$), promedio y máxima ($T_{\max}$) de cada individuo.
+
+    \item Evaluar la normalidad de las distribuciones de las estaturas real,
+    del arco y de la cuerda mediante la prueba de Shapiro-Wilk, con el fin de
+    determinar el uso de pruebas paramétricas o no paramétricas.
+
+    \item Calcular la correlación de Pearson entre la talla real y cada una
+    de las estaturas estimadas ($T_{\min}$, $T_{\text{prom}}$ y $T_{\max}$),
+    y entre el arco y la cuerda de cada hemiarcada.
+
+    \item Cuantificar el error de estimación del método mediante el RMSE entre
+    la talla real y el punto medio del rango predicho.
+
+    \item Buscar el coeficiente $k$ óptimo por hemiarcada que minimice el error
+    cuadrático medio entre la estatura real y la estimada por el método de Carrea.
+
+    \item Ajustar modelos de regresión lineal con las medidas dentales y el sexo
+    como predictores de la estatura, y evaluar su viabilidad mediante la prueba $F$
+    y el coeficiente de determinación $R^2$.
+
+    \item Comparar si el dimorfismo sexual tiene influencia en la estimación
+    de la estatura mediante una prueba $t$ de Student independiente.
+\end{itemize}
+
+%------ Antecedentes --------%
+
+\section*{Antecedentes}
+El método odontológico desarrollado por el Dr. Juan Ubaldo Carrea en 1920 se fundamenta en la premisa de que existe una relación proporcional entre las dimensiones de los órganos dentales y la estatura de un individuo \cite{Brito2022}.
+
+\begin{figure}[h!]
+    \centering
+    \includegraphics[width=0.5\textwidth]{Arco_cuerda.jpg}
+    \caption{Arco (rojo) y cuerda (azul) usadas en el modelo de Carrea \cite{Garrido2012}}
+    \label{fig:arco_cuerda}
+\end{figure}
+
+Esta técnica utiliza las medidas del \textbf{arco} (suma de los diámetros mesiodistales del incisivo central, lateral y canino inferior) y el \textbf{radio-cuerda} (distancia lineal entre los mismos puntos) para calcular una estatura máxima y mínima respectivamente, las cuales se pueden observar en la figura \ref{fig:arco_cuerda} \cite{Brito2022}. A lo largo de un siglo, este modelo ha sido replicado en diversas poblaciones con resultados heterogéneos:
+
+\begin{itemize}
+\item \textbf{India:} Investigaciones en las poblaciones \textbf{Aria y Dravidiana} validaron el índice de Carrea, logrando predecir con éxito la estatura en el \textbf{84\% de los hombres Arios y el 80\% de los Dravidianos}, mientras que en mujeres de ambas razas la efectividad fue del \textbf{76\%}, afirmando además que, según el Test Exacto de Fisher, no existe diferencia significativa entre razas \cite{Anita2016}.
+
+\item \textbf{Chile y Perú:} Diversos estudios han reportado una alta fiabilidad. En Chile, autores como Meza (2014) \cite{meza2014} y Gajardo (2011) \cite{Brito2022} concluyeron que el método es fiable con valores entre 72\% a 83\% en el índice de concordancia de Pearson, determinando la estatura correcta en más de la mitad de sus casos. De igual manera, en Perú, investigaciones como las de Villanueva (2018) obtuvieron resultados que respaldan su eficacia en dicha población.
+
+\item \textbf{Brasil:} Se han documentado contrastes significativos. Mientras que estudios en Campina Grande mostraron concordancia entre la estatura real y estimada, el trabajo de \textbf{Almeida (1995)} \cite{Brito2022} en \textbf{poblaciones autóctonas} reveló que las estimaciones no coincidían con los datos reales, sugiriendo una pérdida de efectividad en grupos sin características de mestizaje.
+
+\item \textbf{Ecuador:} Aunque estudios en estudiantes universitarios de Riobamba lo consideran una fórmula factible, la investigación de \textbf{Medina (2017)} con las etnias \textbf{Shuar, Kichwa y Puruhá} encontró falencias críticas en el estimado, concluyendo que el método tiende a ser poco efectivo en poblaciones originarias \cite{Brito2022}.
+\end{itemize}
+
+Esta variabilidad internacional subraya que la morfología dental está influenciada por \textbf{factores genéticos y geográficos}. En el contexto de \textbf{México}, se ha señalado una notable carencia de información sobre el tamaño mesiodistal de los dientes de sus habitantes, lo que obliga al uso de tablas de referencia extranjeras que podrían no ser precisas \cite{Gonzalez2015}. Por lo tanto, resulta imperativo evaluar la efectividad del modelo de Carrea en la población mexicana para determinar si es necesaria una \textbf{adaptación del modelo} que considere las características odontométricas locales \cite{Brito2022}.
+
+%------ Justificación --------%
+
+\section*{Justificación}
+
+La identificación humana constituye uno de los desafíos más críticos para las ciencias forenses en México. Al cierre de marzo de 2025, se estima la existencia de más de \textbf{72,100 cuerpos sin identificar} en servicios funerarios, morgues y fosas clandestinas \cite{AmnistiaInt2025}. Esta crisis se ve agravada por antecedentes como los reportados entre 2012 y 2013, donde 3,662 cuerpos fueron enviados a fosas comunes estatales sin ser reconocidos \cite{Gonzalez2015}. Ante este escenario, la estimación de la estatura se vuelve un parámetro fundamental, al ser considerado uno de los ``cuatro grandes'' elementos de la antropología forense (estatura, edad, sexo y ancestría) necesarios para lograr una identificación positiva \cite{Anita2016}.
+
+La pertinencia de recurrir al método de Carrea radica en que los dientes, debido a su composición de tejido duro y su disposición anatómica, son prácticamente \textbf{indestructibles y se conservan indemnes} ante procesos de putrefacción, desastres de gran magnitud o largos periodos de tiempo \cite{Brito2022}. No obstante, la efectividad de este método no es universal; se ha documentado que factores genéticos y geográficos, como la raza y el medio ambiente, influyen directamente en la morfología dental \cite{Rojo2014}.
+
+Por tanto, realizar una investigación que valide y, de ser necesario, adapte el método de Carrea a la población mexicana no solo es una necesidad académica, sino una urgencia social para dotar a las autoridades de herramientas antropométricas precisas que faciliten la restitución de la identidad a los miles de cuerpos que permanecen como desconocidos en el país \cite{Brito2022}.
+
+%------ Base de datos --------%
+
+\section*{Elección y descripción de la base de datos}
+
+\subsection*{Fuente y proceso de recolección}
+
+Los datos empleados en esta investigación son recopilados de manera prospectiva por odontólogos de la \textbf{Escuela Nacional de Ciencias Forenses (ENCF)} de la Universidad Nacional Autónoma de México, utilizando la \textbf{Colección Nacional Odontológica de la UNAM} como acervo de referencia. Los participantes donaron voluntariamente sus modelos dentales de yeso a dicha colección.
+
+Para este estudio se dispone de \textbf{dos bases de datos complementarias}. La \textbf{base de 13 muestras} fue diseñada para cuantificar el error intra e inter-observador e intra e inter-medición; en ella participaron \textbf{3 observadores}, cada uno realizando \textbf{2 observaciones} con ambos instrumentos. La \textbf{base de 41 muestras} constituye el conjunto principal sobre el que se evaluará el modelo de Carrea; fue generada por \textbf{1 observador} con \textbf{1 observación} por modelo, empleando únicamente el \textbf{vernier}.
+
+Ambas bases fueron unidas en un conjunto final de \textbf{54 individuos}. Para los 13 individuos de la base pequeña se promedió la observación 1 y la observación 2 del observador 1 con vernier. Los 5 individuos presentes en ambas fuentes fueron conservados en los dos registros al verificarse que sus medidas dentales promediadas diferían entre fuentes.
+
+\subsection*{Número de individuos y características de la muestra}
+
+El conjunto de datos unificado cuenta con \textbf{54 individuos}, 44 de sexo femenino y 10 de sexo masculino. El rango de edades de los participantes es de \textbf{18 a 56 años} y las estaturas registradas oscilan entre \textbf{1.42 y 1.78 metros} (media = 1.59\,m, DE = 0.073\,m). El lugar de origen se distribuye como sigue: 35 individuos de Ciudad de México (64.8\%), 16 del Estado de México (29.6\%) y 3 de otros estados o desconocido (5.6\%).
+
+\subsection*{Criterios de inclusión y exclusión}
+
+\textbf{Criterios de inclusión:}
+\begin{itemize}
+    \item Personas mayores de edad (18 años o más).
+    \item Donantes voluntarios de su modelo dental a la Colección Nacional Odontológica de la UNAM.
+\end{itemize}
+
+\textbf{Criterios de exclusión:}
+\begin{itemize}
+    \item Individuos que carezcan de alguno de los dientes necesarios para el cálculo del índice de Carrea (incisivos centrales, laterales o caninos) serán excluidos del análisis de la correspondiente hemiarcada.
+    \item Medidas dentales anatómicamente imposibles según rangos de referencia para dientes permanentes inferiores en adultos (incisivo central: 3.5--6.5\,mm; incisivo lateral: 5.0--7.5\,mm; canino: 5.5--8.5\,mm) se eliminan por considerarse errores de medición.
+\end{itemize}
+
+Tras aplicar estos criterios se eliminaron 3 registros: ID\,26 (mm\,43 = 8.84\,mm, canino H4 fuera de rango), ID\,17 (mm\,32 = 4.14\,mm, incisivo lateral H3 fuera de rango) y un registro sin código (mm\,31 = 8.58\,mm, incisivo central H3 fuera de rango). El tamaño muestral final para el análisis es de \textbf{n = 52 para H3} y \textbf{n = 53 para H4}.
+
+\subsection*{Variables contenidas en la base de datos}
+
+Las variables se dividen en dos grupos: cualitativas/demográficas y cuantitativas/odontométricas.
+
+\textbf{Variables cualitativas y demográficas:} evaluador, número de modelo, ID, instrumento (Vernier), edad, sexo (F/M), estatura real (m) y lugar de origen.
+
+\textbf{Variables cuantitativas odontométricas:} se registran los diámetros mesiodistales de los seis dientes anteriores inferiores utilizando la nomenclatura FDI: mm\,31, mm\,41 (incisivos centrales); mm\,32, mm\,42 (incisivos laterales); mm\,33, mm\,43 (caninos). También se incluyen las cuerdas mm\,33--31 y mm\,43--41, y la distancia intercanina inferior mm\,43--33. A partir de estas medidas se calculan los arcos:
+
+\begin{align}
+    \text{Arco H3} &= \text{mm\,31} + \text{mm\,32} + \text{mm\,33} \\
+    \text{Arco H4} &= \text{mm\,41} + \text{mm\,42} + \text{mm\,43}
+\end{align}
+
+Con todo lo anterior se obtienen las estaturas estimadas por el modelo de Carrea:
+
+\begin{align}
+    T_{\min} &= \frac{\min(\text{cuerda, arco}) \times 60 \times \pi}{2\,000} \text{ m} \\[4pt]
+    T_{\max} &= \frac{\max(\text{cuerda, arco}) \times 60 \times \pi}{2\,000} \text{ m}
+\end{align}
+
+donde la división entre 1\,000 convierte los milímetros a metros. La función $\min/\max$ se aplica porque en algunos casos la cuerda medida supera al arco, lo cual es geométricamente imposible y se atribuye a error de medición acumulado entre piezas; en esos casos se invierte el orden para garantizar $T_{\min} \leq T_{\max}$.
+
+%------ Resultados --------%
+
+\section*{Resultados}
+
+\subsection*{1. Verificación de normalidad}
+
+Se evaluó la normalidad de la estatura real y de las variables odontométricas relevantes mediante la prueba de Shapiro-Wilk, apropiada para muestras pequeñas ($n < 50$). Los resultados se presentan en el Cuadro~\ref{tab:shapiro}.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lcc}
+\toprule
+\textbf{Variable} & \textbf{W} & \textbf{p} \\
+\midrule
+Estatura global    & 0.9748 & 0.309 \\
+Estatura femenino  & 0.9671 & 0.237 \\
+Estatura masculino & 0.8988 & 0.213 \\
+Arco H3            & 0.9857 & 0.782 \\
+Cuerda H3          & 0.9584 & 0.067 \\
+Arco H4            & 0.9931 & 0.990 \\
+Cuerda H4          & 0.9739 & 0.297 \\
+\bottomrule
+\end{tabular}
+\caption{Resultados de la prueba de Shapiro-Wilk para las variables de interés. Todos los grupos cumplen el supuesto de normalidad ($p > 0.05$), lo que justifica el uso de pruebas paramétricas.}
+\label{tab:shapiro}
+\end{table}
+
+Todos los grupos cumplen normalidad ($p > 0.05$). Se utilizaron \textbf{pruebas paramétricas} (correlación de Pearson, prueba $t$ de Student) en los análisis posteriores.
+
+\subsection*{2. Correlación arco-cuerda}
+
+Dado que arco y cuerda son teóricamente dependientes —la cuerda es la distancia lineal del segmento que el arco recorre por la superficie dental—, se verificó empíricamente su correlación antes de incluir ambas variables como predictores simultáneos, para evitar colinealidad. Se aplicó la correlación de Pearson, dado que ambas variables son normales en H3 y H4.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Hemiarcada} & \textbf{r} & \textbf{IC 95\%} & \textbf{p} \\
+\midrule
+H3 (31--33) & 0.665 & $[0.479,\ 0.794]$ & $<0.001$ \\
+H4 (41--43) & 0.521 & $[0.291,\ 0.693]$ & $<0.001$ \\
+\bottomrule
+\end{tabular}
+\caption{Correlación de Pearson entre arco y cuerda por hemiarcada. La correlación es moderada-alta y significativa en ambos casos, confirmando colinealidad. Se retiene únicamente el arco como predictor en los modelos de regresión.}
+\label{tab:cor_arco_cuerda}
+\end{table}
+
+\subsection*{3. Aplicación del método de Carrea original}
+
+\subsubsection*{Precisión y RMSE}
+
+Se aplicó el método de Carrea con $k = 30\pi \approx 94.25$ a las hemiarcadas inferiores. Se define como \textit{preciso} un caso en que la estatura real cae dentro del rango $[T_{\min},\, T_{\max}]$. Los resultados se presentan en el Cuadro~\ref{tab:carrea_original}.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Hemiarcada} & \textbf{n} & \textbf{Precisión} & \textbf{RMSE} &
+\textbf{r ($T_{\text{prom}}$)} & \textbf{p} \\
+\midrule
+H3 (31--33) & 52 & 13.5\% & 0.150\,m & $-$0.002 & 0.991 \\
+H4 (41--43) & 53 & 18.9\% & 0.142\,m &    0.048  & 0.735 \\
+\bottomrule
+\end{tabular}
+\caption{Resultados del método de Carrea original sobre las hemiarcadas inferiores. La precisión se define como el porcentaje de individuos cuya estatura real cae dentro del rango predicho $[T_{\min},\, T_{\max}]$. RMSE calculado entre la estatura real y el punto medio del rango. $r$ es la correlación de Pearson entre $T_{\text{prom}}$ y la estatura real.}
+\label{tab:carrea_original}
+\end{table}
+
+Las correlaciones de Pearson entre las estaturas estimadas y la estatura real son nulas en ambas hemiarcadas ($r \approx 0$, $p > 0.05$), incluyendo $T_{\min}$ ($r = 0.055$, $p = 0.697$ en H3; $r = 0.127$, $p = 0.364$ en H4) y $T_{\max}$ ($r = -0.059$, $p = 0.677$ en H3; $r = -0.046$, $p = 0.745$ en H4). La ausencia de correlación indica que no existe relación lineal entre las medidas dentales y la estatura en esta muestra, lo que anula la posibilidad de aplicar análisis de concordancia (índice de Lin, ANOVA de medidas repetidas, prueba $t$ pareada) como herramientas de validación del método.
+
+En cuanto a los dientes superiores, la aplicación del método de Carrea a los cuadrantes 1 y 2 produce estimaciones superiores a 2\,m en el 100\% de los casos, lo que da lugar a una precisión del 0\%. Este hallazgo coincide con lo reportado por Lima (2008), quien documentó un fracaso total del método al aplicarlo sobre dientes superiores. Por esta razón, el análisis se restringe a las hemiarcadas inferiores.
+
+\subsection*{4. Carrea con $k$ óptimo}
+
+Se buscó el valor de $k$ que minimiza el error cuadrático medio (MSE) entre la estatura real y el punto medio del rango predicho. La solución analítica de mínimos cuadrados para un modelo sin intercepto es:
+
+\begin{equation}
+    k_{\text{opt}} = \frac{\displaystyle\sum_{i=1}^{n} \text{estatura}_i \cdot x_i}
+                         {\displaystyle\sum_{i=1}^{n} x_i^2},
+    \qquad
+    x_i = \frac{\text{cuerda}_i + \text{arco}_i}{2\,000}
+\end{equation}
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Hemiarcada} & $k_{\text{Carrea}}$ & $k_{\text{opt}}$ & \textbf{RMSE} & \textbf{Precisión} \\
+\midrule
+H3 (31--33) & 94.25 & 89.05 & 0.116\,m & 31.7\% \\
+H4 (41--43) & 94.25 & 88.59 & 0.124\,m & 26.8\% \\
+\bottomrule
+\end{tabular}
+\caption{Comparación entre el coeficiente original de Carrea y el $k$ óptimo por hemiarcada. El $k$ óptimo representa una reducción aproximada del 6\% respecto al original, con mejora modesta en RMSE y precisión.}
+\label{tab:k_optimo}
+\end{table}
+
+El $k$ óptimo resultó similar en ambas hemiarcadas ($\approx 88$--$89$), aproximadamente un 6\% menor que el coeficiente de Carrea. La mejora en precisión es de 13--14 puntos porcentuales, pero la precisión global sigue siendo baja (27--32\%), lo que indica que el problema no se reduce a un reescalamiento del coeficiente sino a la ausencia de relación entre las medidas dentales y la estatura en esta población.
+
+\subsection*{5. Modelos de regresión lineal}
+
+\subsubsection*{5a. Dientes individuales como predictores}
+
+Se ajustó un modelo de regresión lineal múltiple de la forma estatura $\sim d_1 + d_2 + d_3$ para cada hemiarcada. La prueba $F$ global evalúa si los predictores aportan poder explicativo más allá del intercepto.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lccc}
+\toprule
+\textbf{Hemiarcada} & $R^2$ & $R^2$ ajustado & $p(F)$ \\
+\midrule
+H3 (31--33) & 0.034 & $-$0.044 & 0.728 \\
+H4 (41--43) & 0.009 & $-$0.071 & 0.951 \\
+\bottomrule
+\end{tabular}
+\caption{Regresión lineal múltiple con dientes individuales como predictores. Los $R^2$ cercanos a cero y las pruebas $F$ no significativas ($p > 0.05$) en ambas hemiarcadas demuestran que las medidas individuales de cada diente no constituyen predictores viables de la estatura.}
+\label{tab:reg_dientes}
+\end{table}
+
+\subsubsection*{5b. Arco y sexo como predictores}
+
+Dado que arco y cuerda están correlacionados (Cuadro~\ref{tab:cor_arco_cuerda}), se optó por incluir únicamente el arco como predictor dental para evitar colinealidad. Se ajustó el modelo estatura $\sim$ arco $+$ sexo.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Hemiarcada} & $R^2$ & $R^2$ adj. & $p(\text{arco})$ & $p(\text{sexo})$ & $p(F)$ \\
+\midrule
+H3 (31--33) & 0.202 & 0.170 & 0.889 & 0.001 & 0.004 \\
+H4 (41--43) & 0.185 & 0.152 & 0.773 & 0.001 & 0.006 \\
+\bottomrule
+\end{tabular}
+\caption{Regresión lineal con arco y sexo como predictores. El modelo global es significativo ($p < 0.05$), pero el arco no aporta poder explicativo ($p > 0.77$) en ninguna hemiarcada. Todo el poder predictivo proviene del sexo.}
+\label{tab:reg_arco_sexo}
+\end{table}
+
+El arco no es significativo en ninguno de los dos modelos ($p > 0.77$), mientras que el sexo sí lo es en ambos ($p = 0.001$). Esto indica que el modelo estatura $\sim$ arco $+$ sexo es esencialmente equivalente a estimar la estatura únicamente por sexo: las medidas dentales no aportan información adicional sobre la talla.
+
+\subsubsection*{5c. Dimorfismo sexual}
+
+La diferencia de medias entre hombres (media = 1.657\,m, DE = 0.077\,m) y mujeres (media = 1.576\,m, DE = 0.065\,m) es de aproximadamente 8\,cm y estadísticamente significativa (prueba $t$ independiente, $p = 0.001$). La correlación de Spearman entre sexo y estatura es $\rho = 0.42$ ($p = 0.002$). El sexo es la única variable con capacidad predictiva real sobre la estatura en esta muestra.
+
+%------ Discusión --------%
+
+\section*{Discusión}
+
+\subsection*{Conclusión sobre los modelos aplicados}
+
+Los resultados obtenidos permiten responder con claridad la pregunta de investigación: \textbf{el método de Carrea no es válido para estimar la estatura en la población mexicana del área metropolitana}. Las correlaciones de Pearson entre las estaturas estimadas por el método y la estatura real son nulas e inconsistentes en ambas hemiarcadas inferiores ($r \in [-0.06,\, 0.13]$, todos $p > 0.35$), lo que indica ausencia de relación lineal entre las medidas dentales y la talla. Esta falta de correlación impidió aplicar los análisis de concordancia originalmente propuestos (índice de Lin, ANOVA de medidas repetidas, prueba $t$ pareada), ya que dichos análisis presuponen una asociación entre los métodos comparados.
+
+Los tres enfoques de modelado explorados convergen en la misma conclusión. El método original de Carrea alcanza una precisión de apenas 13.5\% en H3 y 18.9\% en H4, muy por debajo de lo reportado en otras poblaciones. La re-optimización del coeficiente $k$ mejora marginalmente la precisión (27--32\%), pero no modifica el problema de fondo: las medidas dentales no predicen la estatura. Los modelos de regresión lineal confirman que el arco no es un predictor significativo de la talla ($p > 0.77$), y que el único factor con poder explicativo real es el sexo.
+
+\subsection*{Comparación con estudios previos}
+
+Los resultados contrastan marcadamente con los obtenidos en otras poblaciones. En India, Anita et al.\ (2016) reportaron precisiones del 76--84\% \cite{Anita2016}; en Chile, Meza (2014) y Gajardo (2011) obtuvieron concordancias de Pearson del 72--83\% \cite{meza2014, Brito2022}. Sin embargo, los hallazgos son consistentes con Lima (2008), quien documentó un fracaso total del método al aplicarlo sobre dientes superiores, y con la advertencia de Achla et al.\ (2016) \cite{yadav2016}: los modelos odontométricos \textit{son específicos de población y no transferibles}. El presente estudio proporciona evidencia empírica de dicha especificidad en población mexicana: ninguna combinación de medidas dentales predice la estatura, incluso tras re-optimizar los coeficientes del modelo.
+
+La baja efectividad observada puede explicarse por la escasa información disponible sobre el tamaño mesiodistal dental de la población mexicana \cite{Gonzalez2015, Rojo2014}, que impide contar con valores de referencia propios, y por la diversidad étnica y de mestizaje que caracteriza a dicha población, factores que en otras investigaciones se han asociado con menor efectividad del método \cite{Brito2022}.
+
+\subsection*{Aporte principal}
+
+El aporte central de este trabajo es la demostración empírica, en una muestra de población mexicana del área metropolitana, de que el método de Carrea no es un estimador válido de la estatura y de que ninguna variante del mismo —incluyendo la re-optimización del coeficiente y modelos de regresión con variables odontométricas— logra superar esta limitación. Esto tiene implicaciones directas para la práctica forense: el uso del método de Carrea en México sin validación previa en la población específica puede conducir a estimaciones erróneas que dificulten la identificación de personas.
+
+\subsection*{Limitaciones y perspectivas futuras}
+
+Entre las principales limitaciones del estudio se encuentran el tamaño muestral reducido ($n = 54$), que impide ajustar modelos de regresión estables y hace inviables métodos no lineales; el marcado desequilibrio por sexo (44 mujeres frente a 10 hombres), que reduce la confiabilidad de los análisis estratificados; la restricción geográfica a CDMX y Estado de México, que limita la representatividad nacional; y el amplio rango de edades (18--56 años) con pocos individuos en los extremos.
+
+Como perspectivas futuras se propone ampliar la muestra con mayor balance por sexo para explorar modelos estratificados con adecuada potencia estadística; incluir variables morfológicas adicionales como la anchura dental, el índice de Bolton o indicadores de asimetría dental; extender el estudio a otras regiones de México para evaluar la variabilidad geográfica; y desarrollar tablas de referencia odontométricas específicas para población mexicana como paso previo a cualquier modelo de estimación de estatura.
+
+\begin{thebibliography}{99}
+
+\bibitem{Brito2022}
+Brito Arízaga, J. E., Cáceres Manzano, V. P., Galarza Pazmiño, M. de los A., Quintana Yánez, J. M., \& Machado, J. P. (2022). Aplicación del método odontológico de carrea para la identificación forense. Relación entre la estatura real con la estimada. \textit{Anatomía Digital}, \textbf{5}(2), 110--124. \url{https://doi.org/10.33262/anatomiadigital.v5i2.2190}
+
+\bibitem{meza2014}
+Meza Escobar, O. (2014).
+Evaluación del índice de Carrea para estimar estatura de población chilena adulta en Santiago.
+Universidad de Chile. Disponible en: \url{https://repositorio.uchile.cl/handle/2250/133995}
+
+\bibitem{AmnistiaInt2025}
+Amnistía Internacional México. (2025). \textit{Desaparecer otra vez. Mujeres buscadoras y crisis de desaparición en México}. Amnistía Internacional.
+
+\bibitem{Gonzalez2015}
+González-Gómez, J., Melo-Santiesteban, G., Cerda-Flores, R. M., \& Calderón-Garcidueñas, A. L. (2015). Evaluación forense comparativa del método odontológico de Carrea para estimar la talla real en cadáveres mexicanos. \textit{Revista Española de Medicina Legal}, \textbf{42}(2), 48--54. \url{https://doi.org/10.1016/j.remle.2015.05.003}
+
+\bibitem{Anita2016}
+Anita P, Madankumar PD, Sivasamy S, Balan IN. (2016). Validity of Carrea's index in stature estimation among two racial populations in India. \textit{J Forensic Dent Sci}, \textbf{8}, 110.
+
+\bibitem{Rojo2014}
+Gutiérrez-Rojo, J. F., Robles-Jiménez, E. A., Reyes-Maldonado, Y. S., \& Rojas-García, A. R. (2014). Tamaño mesiodistal de dientes permanentes en una población de Nayarit. \textit{División de Estudios de Posgrado e Investigación de la Unidad Académica de Odontología, Universidad Autónoma de Nayarit}, \textbf{6}(1), 15--19.
+
+\bibitem{yadav2016}
+Yadav, A. B., Yadav, S. K., Kedia, N. B., \& Singh, A. K. (2016).
+An odontometric approach for estimation of stature in Indians: Cross-sectional analysis.
+\textit{Journal of Clinical and Diagnostic Research}, \textit{10}(3), ZC24--ZC26.
+\url{https://doi.org/10.7860/JCDR/2016/18406.7386}
+
+\bibitem{Garrido2012}
+Garrido, Y., Zavando Matamala, D., \& Suazo, I. (2012). Estimación de la estatura a partir de las dimensiones de la dentición temporal. \textit{International Journal of Odontostomatology}, \textbf{6}(2), 139--143. \url{https://doi.org/10.4067/S0718-381X2012000200004}
+
+\end{thebibliography}
+\end{document}
