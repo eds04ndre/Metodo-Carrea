@@ -37,9 +37,9 @@ def load(path):
     with open(path, newline="", encoding="utf-8-sig") as f:
         return list(csv.DictReader(f))
 
-A_raw  = load("Mediciones_Estatura.csv")       # base de 41 (1 obs, vernier)
-B_raw  = load("datos_limpios_validados.csv")   # base de 13 (2 obs por modelo)
-DE_raw = load("Datos_Estatura.csv")            # demografia de la base de 13
+A_raw  = load("data/Mediciones_Estatura.csv")       # base de 41 (1 obs, vernier)
+B_raw  = load("data/datos_limpios_validados.csv")   # base de 13 (2 obs por modelo)
+DE_raw = load("data/Datos_Estatura.csv")            # demografia de la base de 13
 
 # --- Preparar A: filtrar evaluador 1 + vernier (typo "Verniere" en origen) ---
 A = []
@@ -143,7 +143,7 @@ datos.sort(key=keyid)
 
 # escribir CSV corregido
 col_order = ["fuente","ID","Edad","Sexo","Estatura","Lugar_origen"] + COLS_DENT
-with open("datos_unidos_corregido.csv", "w", newline="", encoding="utf-8") as f:
+with open("resultados/datos_unidos_corregido.csv", "w", newline="", encoding="utf-8") as f:
     w = csv.DictWriter(f, fieldnames=col_order)
     w.writeheader()
     for r in datos:
@@ -299,7 +299,7 @@ for h, name in [(h3,"H3 (31-33)"), (h4,"H4 (41-43)")]:
               f"ancho={d['ancho_cm']:.1f}cm  k_opt={d['k_opt']:.1f}  prec(k_opt)={d['precision_kopt']}%")
 
 # escribir CSV de estimaciones por individuo
-with open("estimaciones_cuerda_geometrica.csv","w",newline="",encoding="utf-8") as f:
+with open("resultados/estimaciones_cuerda_geometrica.csv","w",newline="",encoding="utf-8") as f:
     w = csv.writer(f)
     w.writerow(["hemiarcada","ID","fuente","Sexo","Edad","Estatura","Lugar_origen",
                 "arco","cuerda_medida","cuerda_geometrica",
@@ -392,7 +392,7 @@ for name, h in [("H3 (31-33)", h3), ("H4 (41-43)", h4)]:
         f"es esencialmente un artefacto de medicion, no una propiedad del individuo**.\n")
 
 report = "".join(lines)
-with open("caracteristicas_aciertos.md","w",encoding="utf-8") as f:
+with open("resultados/caracteristicas_aciertos.md","w",encoding="utf-8") as f:
     f.write(report)
 print("=== 3. CARACTERISTICAS DE LOS ACIERTOS ===")
 print(report)

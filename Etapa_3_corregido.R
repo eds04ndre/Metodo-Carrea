@@ -15,7 +15,7 @@
 library(dplyr)
 library(tidyr)
 
-du <- read.csv("datos_unidos_corregido.csv",
+du <- read.csv("resultados/datos_unidos_corregido.csv",
                stringsAsFactors = FALSE, check.names = FALSE)
 
 k_carrea <- 30 * pi
@@ -214,5 +214,5 @@ cat(sprintf("Spearman(sexo, estatura): rho=%.3f p=%.4f\n",
 # ----------------------------------------------------------------
 # Exportar tabla resumen de Carrea (medida vs geométrica)
 # ----------------------------------------------------------------
-write.csv(tabla3, "resultados_carrea_corregido.csv", row.names = FALSE)
-cat("\nGuardado: resultados_carrea_corregido.csv\n")
+write.csv(tabla3, "resultados/resultados_carrea_corregido.csv", row.names = FALSE)
+cat("\nGuardado: resultados/resultados_carrea_corregido.csv\n")

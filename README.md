@@ -48,36 +48,40 @@ la estatura real cae dentro de ese rango.
 
 ## Estructura del repositorio
 
-### Fuentes de datos
-
-| Archivo | Descripción |
-|---|---|
-| `Mediciones_Estatura.csv` | Base principal de 41 individuos (1 observador, vernier). |
-| `datos_limpios_validados.csv` | Base de 13 individuos con réplicas (estudio de error intra/inter-observador). |
-| `Datos_Estatura.csv` | Demografía de los 13 individuos de la base validada. |
+```
+.
+├── Union_limpieza.R          # une fuentes por código de catálogo (ID)
+├── Cuerda_geometrica.R       # cuerda teórica geométrica + re-estimación
+├── Analisis_aciertos.R       # qué tienen en común los aciertos
+├── Etapa_3_corregido.R       # análisis inferencial completo (base corregida)
+├── pipeline_correccion.py    # equivalente en Python (materializa las salidas)
+├── data/                     # fuentes (no modificar)
+│   ├── Mediciones_Estatura.csv      # 41 individuos (1 obs, vernier)
+│   ├── datos_limpios_validados.csv  # 13 individuos con réplicas
+│   ├── Datos_Estatura.csv           # demografía de la base validada
+│   ├── Anexo_E.csv
+│   └── *.xlsx                        # originales en Excel
+├── resultados/               # salidas generadas (regenerables)
+│   ├── datos_unidos_corregido.csv         # base unificada (49 individuos)
+│   ├── estimaciones_cuerda_geometrica.csv # cuerda medida vs geométrica
+│   ├── caracteristicas_aciertos.md        # reporte de aciertos
+│   └── resultados_carrea_corregido.csv    # tabla resumen de Carrea
+├── reporte/                  # documento de la Etapa 3
+│   ├── Etapa3_ProyectoII.tex / .pdf
+│   ├── boxplots_*.pdf
+│   └── figuras/              # figuras del análisis (.png)
+└── archivo/                  # scripts de Etapas 1–2 (superados; ver archivo/README.md)
+```
 
 ### Pipeline de corrección (este trabajo)
 
-| Script | Entrada → Salida |
+| Script | Función → Salida |
 |---|---|
-| `Union_limpieza.R` | Une las fuentes por **código de catálogo** (`ID`) con resolución explícita de conflictos demográficos → `datos_unidos_corregido.csv` |
-| `Cuerda_geometrica.R` | Calcula la cuerda teórica y re-estima Carrea → `estimaciones_cuerda_geometrica.csv` |
-| `Analisis_aciertos.R` | Caracteriza a los individuos con estimación correcta → `caracteristicas_aciertos.md` |
-| `Etapa_3_corregido.R` | Análisis inferencial completo (normalidad, correlación, Carrea, k óptimo, regresiones, dimorfismo) sobre la base corregida y con cuerda geométrica → `resultados_carrea_corregido.csv` |
+| `Union_limpieza.R` | Une las fuentes por **código de catálogo** (`ID`) con resolución explícita de conflictos demográficos → `resultados/datos_unidos_corregido.csv` |
+| `Cuerda_geometrica.R` | Calcula la cuerda teórica y re-estima Carrea → `resultados/estimaciones_cuerda_geometrica.csv` |
+| `Analisis_aciertos.R` | Caracteriza a los individuos con estimación correcta → `resultados/caracteristicas_aciertos.md` |
+| `Etapa_3_corregido.R` | Análisis inferencial completo (normalidad, correlación, Carrea, k óptimo, regresiones, dimorfismo) sobre la base corregida y con cuerda geométrica → `resultados/resultados_carrea_corregido.csv` |
 | `pipeline_correccion.py` | Equivalente en Python que materializa todas las salidas anteriores. |
-
-### Salidas generadas
-
-| Archivo | Contenido |
-|---|---|
-| `datos_unidos_corregido.csv` | Base unificada (49 individuos, sin falsos duplicados). |
-| `estimaciones_cuerda_geometrica.csv` | Estimaciones por individuo: cuerda medida vs geométrica. |
-| `caracteristicas_aciertos.md` | Reporte de características de los aciertos. |
-| `resultados_carrea_corregido.csv` | Tabla resumen de Carrea (cuerda medida vs geométrica). |
-
-### Documento
-
-- `Etapa3_ProyectoII.tex` / `.pdf` — reporte de la Etapa 3.
 
 ---
 

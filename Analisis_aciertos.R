@@ -11,7 +11,7 @@
 
 library(dplyr)
 
-du <- read.csv("datos_unidos_corregido.csv",
+du <- read.csv("resultados/datos_unidos_corregido.csv",
                stringsAsFactors = FALSE, check.names = FALSE)
 k_carrea <- 30 * pi
 

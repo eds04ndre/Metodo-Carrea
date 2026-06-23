@@ -1,0 +1,8 @@
+# Artefactos de sesión de R (no son fuente; se regeneran)
+.RData
+.Rhistory
+.Rproj.user/
+
+# Sistema
+Thumbs.db
+.DS_Store

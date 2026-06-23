@@ -16,12 +16,11 @@ library(dplyr)
 # ----------------------------------------------------------------
 # 1. Carga
 # ----------------------------------------------------------------
-help(read.csv)
-A_raw  <- read.csv("Mediciones_Estatura.csv",
+A_raw  <- read.csv("data/Mediciones_Estatura.csv",
                    stringsAsFactors = FALSE, check.names = FALSE)
-B_raw  <- read.csv("datos_limpios_validados.csv",
+B_raw  <- read.csv("data/datos_limpios_validados.csv",
                    stringsAsFactors = FALSE, check.names = FALSE)
-DE_raw <- read.csv("Datos_Estatura.csv",
+DE_raw <- read.csv("data/Datos_Estatura.csv",
                    stringsAsFactors = FALSE, check.names = FALSE)
 
 names(DE_raw) <- trimws(names(DE_raw))   # elimina espacios en nombres de columnas
@@ -156,5 +155,5 @@ cat("IDs únicos:                   ", n_distinct(datos_unidos$ID), "\n")
 cat("Con Estatura conocida:        ", sum(!is.na(datos_unidos$Estatura)), "\n")
 cat("Sin Estatura:                 ", sum(is.na(datos_unidos$Estatura)), "\n\n")
 
-write.csv(datos_unidos, "datos_unidos_corregido.csv", row.names = FALSE)
-cat("Guardado: datos_unidos_corregido.csv\n")
+write.csv(datos_unidos, "resultados/datos_unidos_corregido.csv", row.names = FALSE)
+cat("Guardado: resultados/datos_unidos_corregido.csv\n")

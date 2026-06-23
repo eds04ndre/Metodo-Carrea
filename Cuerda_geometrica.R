@@ -26,7 +26,7 @@
 
 library(dplyr)
 
-du <- read.csv("datos_unidos_corregido.csv",
+du <- read.csv("resultados/datos_unidos_corregido.csv",
                stringsAsFactors = FALSE, check.names = FALSE)
 
 k_carrea <- 30 * pi
@@ -113,5 +113,5 @@ export <- function(d, hemi) {
                              Estatura <= pmax(cuerda_geo,arco)/1000*k_carrea))
 }
 write.csv(bind_rows(export(h3,"H3"), export(h4,"H4")),
-          "estimaciones_cuerda_geometrica.csv", row.names = FALSE)
-cat("\nGuardado: estimaciones_cuerda_geometrica.csv\n")
+          "resultados/estimaciones_cuerda_geometrica.csv", row.names = FALSE)
+cat("\nGuardado: resultados/estimaciones_cuerda_geometrica.csv\n")
