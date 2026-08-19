@@ -1,0 +1,6 @@
+"ID","clasificacion","codigo_nuevo","sexo_A","sexo_B","est_A","est_B","edad_A","edad_B","origen_A","origen_B","dEst"
+"3","MISMA_PERSONA",NA,"F","F",1.67,1.67,25,25,"CDMX","Ciudad de México",0
+"14","DEMOGRAFIA_DISTINTA","9014","F","F",1.42,1.5,20,20,"CDMX","Estado de México",0.08
+"18","DEMOGRAFIA_DISTINTA","9018","F","M",1.57,1.61,20,21,"Estado de México","Estado de México",0.04
+"27","DEMOGRAFIA_DISTINTA","9027","F","F",1.54,1.57,18,30,"Estado de México","Ciudad de México",0.03
+"71","DEMOGRAFIA_DISTINTA","9071","M","F",1.55,1.52,18,19,"CDMX","Ciudad de México",0.03

@@ -95,17 +95,20 @@ for cid, obs in acc.items():
 # ----------------------------------------------------------------
 # 2. Union corregida -- llave de identidad = codigo de catalogo (ID)
 #
-# Regla de resolucion (transparente y parametrizable):
-#  - Para cada ID presente en ambas fuentes se compara la demografia.
-#  - CONSISTENTE  : mismo Sexo y |dEstatura| <= TOL_EST  -> mismo individuo.
-#  - CONFLICTO    : el sexo difiere o |dEstatura| > TOL_EST -> error de
-#                   integridad en la fuente; NO son confiables como el
-#                   mismo registro.
-#  - En AMBOS casos se conserva el registro VALIDADO (base de 13: replicas
-#    promediadas + demografia dedicada) y se descarta la fila de la base de
-#    41, evitando el doble conteo y las demografias contradictorias del
-#    pipeline anterior. Los conflictos se registran para auditoria.
+# Regla de resolucion (transparente y parametrizable). Para cada ID presente
+# en ambas fuentes se compara la demografia y se clasifica el caso:
+#  - MISMA_PERSONA       : mismo Sexo y |dEstatura| <= TOL_EST. Duplicado real
+#                          del mismo individuo: se conserva el registro VALIDADO
+#                          (base de 13) y se consolida el duplicado.
+#  - DEMOGRAFIA_DISTINTA : el sexo difiere o |dEstatura| > TOL_EST. NO son la
+#                          misma persona: individuos distintos con el mismo
+#                          codigo. NO se eliminan: se les asigna un CODIGO NUEVO
+#                          de 4 digitos (9000 + codigo original) y se integran.
 #  - Las filas "sin codigo" no tienen llave -> nunca se consideran duplicadas.
+#
+# La version anterior eliminaba en bloque las 5 filas con codigo compartido;
+# en 4 de 5 casos eran personas distintas (sexo invertido en 18 y 71). Aqui
+# solo se consolida el unico duplicado real y se recuperan los 4 perdidos.
 # ----------------------------------------------------------------
 TOL_EST = 0.02   # metros
 
@@ -113,7 +116,7 @@ ids_A = {r["ID"] for r in A if r["ID"] != "sin codigo"}
 ids_B = {r["ID"] for r in B}
 overlap = sorted(ids_A & ids_B, key=lambda x: int(x))
 
-conflictos = []
+auditoria = []
 for cid in overlap:
     a = next(r for r in A if r["ID"] == cid)
     b = next(r for r in B if r["ID"] == cid)
@@ -122,18 +125,45 @@ for cid in overlap:
     if a["Estatura"] is not None and b["Estatura"] is not None:
         dest = abs(a["Estatura"] - b["Estatura"])
     est_ok = (dest is not None and dest <= TOL_EST)
-    estado = "CONSISTENTE" if (sexo_ok and est_ok) else "CONFLICTO"
-    conflictos.append({
-        "ID": cid, "estado": estado,
+    misma = sexo_ok and est_ok
+    auditoria.append({
+        "ID": cid,
+        "clasificacion": "MISMA_PERSONA" if misma else "DEMOGRAFIA_DISTINTA",
+        "codigo_nuevo": "" if misma else str(9000 + int(cid)),
         "sexo_A": a["Sexo"], "sexo_B": b["Sexo"],
         "est_A": a["Estatura"], "est_B": b["Estatura"],
         "edad_A": a["Edad"], "edad_B": b["Edad"],
         "origen_A": a["Lugar_origen"], "origen_B": b["Lugar_origen"],
+        "dEst": round(dest, 3) if dest is not None else None,
     })
 
-# Final = base validada (13) + filas de la base de 41 cuyo ID no esta en overlap
-A_keep = [r for r in A if r["ID"] == "sin codigo" or r["ID"] not in overlap]
-datos = B + A_keep
+ids_misma     = {c["ID"] for c in auditoria if c["clasificacion"] == "MISMA_PERSONA"}
+ids_distintos = {c["ID"] for c in auditoria if c["clasificacion"] == "DEMOGRAFIA_DISTINTA"}
+
+# (a) demografias distintas: se recuperan con codigo de 4 digitos (9xxx)
+A_recuperados = []
+for r in A:
+    if r["ID"] in ids_distintos:
+        rr = dict(r)
+        rr["codigo_original"] = r["ID"]
+        rr["ID"] = str(9000 + int(r["ID"]))
+        rr["clasificacion_union"] = "demografia_distinta_recodificada"
+        A_recuperados.append(rr)
+
+# (b) filas de la base de 41 conservadas con su codigo original
+A_propios = []
+for r in A:
+    if r["ID"] == "sin codigo" or r["ID"] not in overlap:
+        rr = dict(r)
+        rr["codigo_original"] = r["ID"]
+        rr["clasificacion_union"] = "unico"
+        A_propios.append(rr)
+
+for r in B:
+    r["codigo_original"] = r["ID"]
+    r["clasificacion_union"] = "validado"
+
+datos = B + A_propios + A_recuperados
 
 # orden por ID numerico (sin codigo al final)
 def keyid(r):
@@ -142,23 +172,34 @@ def keyid(r):
 datos.sort(key=keyid)
 
 # escribir CSV corregido
-col_order = ["fuente","ID","Edad","Sexo","Estatura","Lugar_origen"] + COLS_DENT
+col_order = (["fuente","ID","codigo_original","clasificacion_union",
+             "Edad","Sexo","Estatura","Lugar_origen"] + COLS_DENT)
 with open("resultados/datos_unidos_corregido.csv", "w", newline="", encoding="utf-8") as f:
     w = csv.DictWriter(f, fieldnames=col_order)
     w.writeheader()
     for r in datos:
         w.writerow({k: r.get(k) for k in col_order})
 
+# auditoria de la union
+with open("resultados/auditoria_union_demografias.csv", "w", newline="", encoding="utf-8") as f:
+    w = csv.DictWriter(f, fieldnames=list(auditoria[0].keys()))
+    w.writeheader()
+    for c in auditoria:
+        w.writerow(c)
+
 print("=== 1. UNION CORREGIDA ===")
 print(f"  Base 41 (filtrada): {len(A)} | Base 13 (promediada): {len(B)}")
 print(f"  IDs en comun (codigo de catalogo): {overlap}")
-for c in conflictos:
-    print(f"    ID {c['ID']:>3} [{c['estado']:11}] sexo {c['sexo_A']}->{c['sexo_B']}  "
-          f"est {c['est_A']}->{c['est_B']}  origen {c['origen_A']} -> {c['origen_B']}")
-print(f"  Registros finales: {len(datos)}  (validados {len(B)} + base41 sin duplicar {len(A_keep)})")
+for c in auditoria:
+    extra = f"  -> codigo nuevo {c['codigo_nuevo']}" if c["codigo_nuevo"] else ""
+    print(f"    ID {c['ID']:>3} [{c['clasificacion']:18}] sexo {c['sexo_A']}->{c['sexo_B']}  "
+          f"est {c['est_A']}->{c['est_B']}  origen {c['origen_A']} -> {c['origen_B']}{extra}")
+print(f"  Registros finales: {len(datos)}  (validados {len(B)} + base41 propios "
+      f"{len(A_propios)} + recuperados {len(A_recuperados)})")
 sexes = Counter(r["Sexo"] for r in datos)
+print(f"  Misma persona consolidados: {len(ids_misma)} | demografias distintas recuperadas: {len(ids_distintos)}")
 print(f"  Sexo: {dict(sexes)}")
-print(f"  -> datos_unidos_corregido.csv\n")
+print(f"  -> datos_unidos_corregido.csv, auditoria_union_demografias.csv\n")
 
 # ----------------------------------------------------------------
 # 3. Cuerda teorica geometrica

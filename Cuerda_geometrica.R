@@ -1,6 +1,5 @@
 # ================================================================
 # Cuerda teórica geométrica y re-estimación de Carrea
-# Servicio Social - Edson André Cortés Silva
 # ================================================================
 # Problema: la cuerda MEDIDA es ~igual al arco (cociente ~0.98) y en ~40%
 # de los casos la supera, lo cual es geométricamente imposible y vuelve
@@ -79,7 +78,7 @@ evalua <- function(d, chord_col, k = k_carrea) {
   Tmin  <- pmin(cu, ar) / 1000 * k
   Tmax  <- pmax(cu, ar) / 1000 * k
   Tprom <- (Tmin + Tmax) / 2
-  data.frame(
+  carrea <- data.frame(
     n          = nrow(d),
     precision  = round(mean(est >= Tmin & est <= Tmax) * 100, 1),
     rmse       = round(sqrt(mean((est - Tprom)^2)), 4),
@@ -88,6 +87,7 @@ evalua <- function(d, chord_col, k = k_carrea) {
     imposibles = sum(cu >= ar),
     ancho_cm   = round(mean(Tmax - Tmin) * 100, 1)
   )
+  return (carrea)
 }
 
 cat("=== H3: cuerda medida vs geométrica ===\n")
@@ -96,6 +96,59 @@ print(rbind(MEDIDA = evalua(h3, "cuerda_med"),
 cat("\n=== H4: cuerda medida vs geométrica ===\n")
 print(rbind(MEDIDA = evalua(h4, "cuerda_med"),
             GEOMETRICA = evalua(h4, "cuerda_geo")))
+
+# ----------------------------------------------------------------
+# Gráficos de observación — cuerda medida vs geométrica
+#   Paso crucial: el defecto que motiva todo el script. La cuerda
+#   MEDIDA cae sobre/encima de la recta cuerda=arco (geométricamente
+#   imposible); la cuerda GEOMÉTRICA queda siempre por debajo.
+#   Figuras en reporte/figuras/.
+# ----------------------------------------------------------------
+dir_fig <- "reporte/figuras"
+if (!dir.exists(dir_fig)) dir.create(dir_fig, recursive = TRUE)
+
+# (a) Dispersión arco vs cuerda (medida y geométrica) con la recta límite.
+plot_arco_cuerda <- function(d, etq, archivo) {
+  d   <- d %>% filter(!is.na(cuerda_geo))
+  rng <- range(c(d$arco, d$cuerda_med, d$cuerda_geo))
+  # png(file.path(dir_fig, archivo), width = 1000, height = 800, res = 130)
+  par(mar = c(4.5, 4.5, 3.5, 1))
+  plot(d$arco, d$cuerda_med, pch = 19, col = "#D6604D",
+       xlim = rng, ylim = rng,
+       xlab = "Arco (mm)", ylab = "Cuerda (mm)",
+       main = sprintf("Arco vs cuerda — %s", etq))
+  points(d$arco, d$cuerda_geo, pch = 17, col = "#4393C3")
+  abline(0, 1, lty = 2, col = "grey40")
+  legend("topleft",
+         c("Cuerda medida", "Cuerda geométrica", "cuerda = arco (límite)"),
+         pch = c(19, 17, NA), lty = c(NA, NA, 2),
+         col = c("#D6604D", "#4393C3", "grey40"), bty = "n")
+  n_imp <- sum(d$cuerda_med >= d$arco)
+  mtext(sprintf("Casos imposibles (medida >= arco): %d de %d", n_imp, nrow(d)),
+        side = 3, line = 0.2, cex = 0.85, col = "#D6604D")
+  # dev.off()
+}
+plot_arco_cuerda(h3, "H3 (31-33)", "geo_arco_cuerda_H3.png")
+plot_arco_cuerda(h4, "H4 (41-43)", "geo_arco_cuerda_H4.png")
+
+# (b) Boxplot comparativo: arco, cuerda medida y cuerda geométrica.
+cmp <- na.omit(data.frame(
+  valor = c(h3$arco, h3$cuerda_med, h3$cuerda_geo,
+            h4$arco, h4$cuerda_med, h4$cuerda_geo),
+  grupo = factor(c(
+    rep("H3 arco", nrow(h3)), rep("H3 medida", nrow(h3)), rep("H3 geom.", nrow(h3)),
+    rep("H4 arco", nrow(h4)), rep("H4 medida", nrow(h4)), rep("H4 geom.", nrow(h4))),
+    levels = c("H3 arco", "H3 medida", "H3 geom.",
+               "H4 arco", "H4 medida", "H4 geom."))))
+
+# png(file.path(dir_fig, "geo_boxplot_cuerdas.png"), width = 1100, height = 700, res = 130)
+par(mar = c(6, 4.5, 3, 1))
+boxplot(valor ~ grupo, data = cmp, las = 2, xlab = "", ylab = "Medida (mm)",
+        main = "Arco, cuerda medida y cuerda geométrica",
+        col = rep(c("#B2ABD2", "#D6604D", "#4393C3"), 2))
+# dev.off()
+
+# cat("Figuras guardadas en", dir_fig, "(geo_*.png)\n")
 
 # --- exportar estimaciones por individuo -------------------------
 export <- function(d, hemi) {
@@ -115,3 +168,4 @@ export <- function(d, hemi) {
 write.csv(bind_rows(export(h3,"H3"), export(h4,"H4")),
           "resultados/estimaciones_cuerda_geometrica.csv", row.names = FALSE)
 cat("\nGuardado: resultados/estimaciones_cuerda_geometrica.csv\n")
+

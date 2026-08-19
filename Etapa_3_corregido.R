@@ -1,6 +1,5 @@
 # ================================================================
 # Etapa 3 (versión corregida)
-# Servicio Social - Edson André Cortés Silva
 # ================================================================
 # Difiere de Etapa_3.R en dos puntos:
 #   (1) Usa la base unificada CORREGIDA (datos_unidos_corregido.csv),
@@ -152,6 +151,10 @@ ko_tab <- function(d, chord_col, etq) {
     rmse_k_opt    = calcular_rmse(d$Estatura, d[[chord_col]], d$arco, ko)
   )
 }
+
+# boxplot(h3$cuerda_med,h3$cuerda_geo)
+# boxplot(h4$cuerda_med,h4$cuerda_geo)
+
 print(bind_rows(
   ko_tab(h3,"cuerda_med","H3 medida"), ko_tab(h3,"cuerda_geo","H3 geométrica"),
   ko_tab(h4,"cuerda_med","H4 medida"), ko_tab(h4,"cuerda_geo","H4 geométrica")
@@ -210,6 +213,77 @@ cat(sprintf("Media F=%.3f  Media M=%.3f  dif=%.1f cm  t=%.2f  p=%.4f\n",
 cat(sprintf("Spearman(sexo, estatura): rho=%.3f p=%.4f\n",
             cor(as.integer(du$Sexo=="M"), du$Estatura, method="spearman"),
             cor.test(as.integer(du$Sexo=="M"), du$Estatura, method="spearman")$p.value))
+
+# ----------------------------------------------------------------
+# 6. Gráficos de observación — pasos cruciales del análisis
+#   (1) normalidad de la estatura, (2) correlación arco-cuerda,
+#   (3) HALLAZGO CENTRAL: estimación de Carrea vs estatura real
+#   (correlación nula), (4) precisión medida vs geométrica.
+#   Figuras en reporte/figuras/.
+# ----------------------------------------------------------------
+dir_fig <- "reporte/figuras"
+if (!dir.exists(dir_fig)) dir.create(dir_fig, recursive = TRUE)
+
+# (1) Normalidad de la estatura: Q-Q normal + histograma.
+# png(file.path(dir_fig, "etapa3_estatura_qq.png"), width = 1100, height = 600, res = 120)
+par(mfrow = c(1, 2), mar = c(4.5, 4.5, 3, 1))
+qqnorm(du$Estatura, main = "Q-Q normal — estatura", pch = 19, col = "#4393C3")
+qqline(du$Estatura, col = "#D6604D", lwd = 2)
+hist(du$Estatura, col = "#A8C5DA", border = "white",
+     main = "Histograma — estatura", xlab = "Estatura (m)")
+# dev.off()
+
+# (2) Correlación arco-cuerda por hemiarcada (cuerda medida).
+# png(file.path(dir_fig, "etapa3_arco_cuerda.png"), width = 1100, height = 600, res = 120)
+par(mfrow = c(1, 2), mar = c(4.5, 4.5, 3, 1))
+for (hh in list(list(d = h3, e = "H3 (31-33)"), list(d = h4, e = "H4 (41-43)"))) {
+  d <- hh$d
+  plot(d$arco, d$cuerda_med, pch = 19, col = "#4393C3",
+       xlab = "Arco (mm)", ylab = "Cuerda medida (mm)",
+       main = sprintf("Arco vs cuerda — %s", hh$e))
+  abline(lm(cuerda_med ~ arco, data = d), col = "#D6604D", lwd = 2)
+  legend("topleft", sprintf("r = %.3f", cor(d$arco, d$cuerda_med)), bty = "n")
+}
+# dev.off()
+
+# (3) HALLAZGO CENTRAL: estatura estimada por Carrea (punto medio del
+#     rango) vs estatura real. La nube no sigue la identidad y el ajuste
+#     es plano: la correlación es nula.
+plot_carrea_real <- function(d, chord_col, etq, archivo) {
+  d   <- d %>% filter(!is.na(.data[[chord_col]]))
+  cu  <- d[[chord_col]]; ar <- d$arco
+  Tprom <- (pmin(cu, ar) + pmax(cu, ar)) / 2000 * k_carrea
+  rng <- range(c(Tprom, d$Estatura))
+  # png(file.path(dir_fig, archivo), width = 1000, height = 800, res = 130)
+  par(mar = c(4.5, 4.5, 3, 1))
+  plot(Tprom, d$Estatura, pch = 19, col = "#4393C3", xlim = rng, ylim = rng,
+       xlab = "Estatura estimada (Carrea, punto medio) [m]",
+       ylab = "Estatura real [m]",
+       main = sprintf("Carrea vs real — %s", etq))
+  abline(0, 1, lty = 2, col = "grey50")
+  abline(lm(d$Estatura ~ Tprom), col = "#D6604D", lwd = 2)
+  legend("topleft", c("identidad (y = x)", "ajuste lineal"),
+         lty = c(2, 1), col = c("grey50", "#D6604D"), bty = "n")
+  mtext(sprintf("r = %.3f", cor(Tprom, d$Estatura)),
+        side = 3, line = 0.1, cex = 0.85)
+  # dev.off()
+}
+plot_carrea_real(h3, "cuerda_med", "H3 medida", "etapa3_carrea_real_H3.png")
+plot_carrea_real(h4, "cuerda_med", "H4 medida", "etapa3_carrea_real_H4.png")
+
+# (4) Precisión del rango de Carrea: cuerda medida vs geométrica (tabla3).
+# png(file.path(dir_fig, "etapa3_precision.png"), width = 1000, height = 700, res = 130)
+par(mar = c(7, 4.5, 3, 1))
+bp <- barplot(tabla3$precision, names.arg = tabla3$modelo, las = 2,
+              col = rep(c("#D6604D", "#4393C3"), 2),
+              ylim = c(0, max(tabla3$precision) * 1.2),
+              ylab = "Precisión del rango (%)",
+              main = "Precisión de Carrea: cuerda medida vs geométrica")
+text(bp, tabla3$precision, labels = paste0(tabla3$precision, "%"),
+     pos = 3, cex = 0.9)
+# dev.off()
+
+cat("\nFiguras guardadas en", dir_fig, "(etapa3_*.png)\n")
 
 # ----------------------------------------------------------------
 # Exportar tabla resumen de Carrea (medida vs geométrica)
