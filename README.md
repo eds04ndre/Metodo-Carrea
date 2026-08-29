@@ -79,6 +79,78 @@ fuentes de la Etapa 3.
    `resultados/estimaciones_130.csv` y las pruebas en consola de
    `Analisis_demografico_130.R`.
 
+### Profundizando el hallazgo central: arco vs. sexo
+
+El hallazgo 1 dice que el arco se asocia con la estatura controlando por
+sexo, pero no que ambos aporten lo mismo. Para cuantificarlo se compararon,
+por hemiarcada y sobre la base promediada (H3 n=113, H4 n=112), tres modelos
+anidados: `estatura ~ Sexo` (solo sexo), `estatura ~ arco` (solo arco), y el
+combinado `estatura ~ arco + Sexo` ya reportado en el hallazgo 1, mas los
+modelos de dientes individuales y de cuerda geometrica ya calculados en
+`Etapa_4.R`.
+
+**H3 (33-31):**
+
+| Modelo | R2 | R2_adj | Prueba del predictor | AIC |
+|---|---|---|---|---|
+| Solo sexo (`~ Sexo`) | 0.364 | - | t = -6.72, p < 0.0001 (dif. 12.4 cm) | -280.9 |
+| Solo arco (`~ arco`) | 0.037 | - | r = 0.192 | -233.9 |
+| Dientes individuales (`~ mm_31+mm_32+mm_33`) | 0.083 | 0.057 | F, p_F = 0.024 | - |
+| **arco + sexo** | **0.400** | **0.389** | p_arco = 0.0122, p_sexo < 0.0001 | **-285.4** |
+| cuerda_geo + sexo | 0.403 | 0.392 | p_cuerda_geo = 0.0082, p_sexo < 0.0001 | - |
+
+**H4 (43-41):**
+
+| Modelo | R2 | R2_adj | Prueba del predictor | AIC |
+|---|---|---|---|---|
+| Solo sexo (`~ Sexo`) | 0.363 | - | t = -6.72, p < 0.0001 (dif. 12.4 cm) | -278.6 |
+| Solo arco (`~ arco`) | 0.043 | - | r = 0.206 | -232.9 |
+| Dientes individuales (`~ mm_41+mm_42+mm_43`) | 0.055 | 0.028 | F, p_F = 0.107 (NS) | - |
+| **arco + sexo** | **0.389** | **0.378** | p_arco = 0.0343, p_sexo < 0.0001 | **-281.2** |
+| cuerda_geo + sexo | 0.392 | 0.381 | p_cuerda_geo = 0.0248, p_sexo < 0.0001 | - |
+
+**Comparacion formal de los modelos anidados (ANOVA de suma de cuadrados,
+`anova(modelo_reducido, modelo_completo)`):**
+
+- Agregar **sexo** al modelo de solo arco produce un salto grande y muy
+  significativo: H3 F(1,110) = 66.5, p = 6.1e-13; H4 F(1,109) = 61.8,
+  p = 3.0e-12. El R2 pasa de 0.037 a 0.400 en H3 (+0.363) y de 0.043 a 0.389
+  en H4 (+0.346): sexo por si solo explica **~10 veces mas varianza que el
+  arco por si solo**.
+- Agregar **arco** al modelo de solo sexo tambien es estadisticamente
+  significativo — es la misma prueba vista desde el coeficiente de arco en
+  el modelo combinado (p_arco = 0.0122 en H3, p_arco = 0.0343 en H4) — pero
+  el tamano del efecto es mucho menor: el R2 sube de 0.364 a 0.400 en H3
+  (+0.035, un incremento relativo de ~10 %) y de 0.363 a 0.389 en H4
+  (+0.026, ~7 %).
+- El **AIC** confirma el mismo patron: pasar de "solo arco" a "arco + sexo"
+  mejora el AIC en ~47-52 puntos (mejora enorme), mientras que pasar de
+  "solo sexo" a "arco + sexo" solo lo mejora en 4.5 puntos (H3) y 2.6 puntos
+  (H4) — una mejora marginal. Con n>100 hasta efectos pequenos son
+  estadisticamente detectables (por eso p_arco sale significativo), pero el
+  criterio de informacion deja claro que el arco aporta poco una vez que el
+  sexo ya esta en el modelo, mientras que el sexo aporta muchisimo una vez
+  que el arco ya esta en el modelo.
+
+**Por que el sexo es mas descriptivo (interpretacion biologica):** la
+estatura humana tiene un dimorfismo sexual grande y consistente (~12-13 cm
+en esta muestra, impulsado por diferencias hormonales en el momento de
+cierre de las placas de crecimiento de los huesos largos), por lo que una
+sola etiqueta binaria (F/M) ya captura ~36 % de la varianza de estatura. El
+tamano dental (arco), en cambio, es un proxy mucho mas debil e indirecto del
+tamano corporal: la corona de los incisivos y el canino termina de formarse
+antes de la erupcion, en gran medida independiente de los estirones de
+crecimiento somatico que vienen despues, y responde mas al tamano local de
+la cripta dentaria (control genetico especifico) que a la talla esqueletica
+general. Por eso el arco explica solo ~4 % de la varianza de estatura de
+forma aislada, y su aporte incremental una vez controlado el sexo es pequeno
+(3-4 puntos porcentuales de R2), aunque detectable con este tamano de
+muestra. Esto es justo lo que le falta al metodo de Carrea: al usar
+exclusivamente medidas dentales ignora la variable que mas informacion
+aporta (el sexo) y se apoya en la que aporta menos (el arco), lo que explica
+por que su punto de estimacion correlaciona debilmente con la estatura real
+(r = 0.21-0.26, hallazgo 1).
+
 ### Eficacia de Carrea por observador individual
 
 `Analisis_por_observador_130.R` aplica Carrea (cuerda medida, k=30*pi) con las
