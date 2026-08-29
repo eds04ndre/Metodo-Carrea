@@ -1,5 +1,4 @@
 library(dplyr)
-setwd("C:/Users/ASUS/Documents/Edson/Servicio Social/Repositorio/")
 
 # ----------------------------------------------------------------
 # 1. Carga

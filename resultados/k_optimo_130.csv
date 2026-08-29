@@ -1,0 +1,5 @@
+"caso","k_carrea","k_opt","prec_k_carrea","prec_k_opt","rmse_k_opt"
+"H3 medida",94.25,90.11,23,21.2,0.1086
+"H3 geometrica",94.25,91.5,28.6,30.4,0.1148
+"H4 medida",94.25,90.65,32.1,26.8,0.1036
+"H4 geometrica",94.25,91.3,30.4,36.6,0.1128

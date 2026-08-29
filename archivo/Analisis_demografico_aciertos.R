@@ -13,7 +13,6 @@
 # ================================================================
 
 library(dplyr)
-setwd("C:/Users/ASUS/Documents/Edson/Servicio Social/Repositorio")
 est <- read.csv("resultados/estimaciones_cuerda_geometrica.csv",
                 stringsAsFactors = FALSE, check.names = FALSE)
 

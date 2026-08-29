@@ -5,8 +5,6 @@
 library(readxl)
 library(dplyr)
 
-setwd("C:/Users/ASUS/Documents/Edson/Servicio Social/Repositorio/")
-
 RUTA_DATOS    <- "data/Datos_observadores.xlsx"
 RUTA_ESTATURA <- "data/Datos_Estatura.xlsx"
 

@@ -10,7 +10,6 @@ library(readxl)
 # =====================================================================
 
 # ==================== 1. CARGA DE DATOS ====================
-setwd("C:/Users/ASUS/Documents/Edson/Servicio Social/Repositorio")
 estatura <- read_excel("data/Datos_Estatura.xlsx")
 observadores <- read_excel("data/Datos_observadores.xlsx")
 

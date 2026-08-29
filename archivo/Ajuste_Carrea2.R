@@ -1,7 +1,6 @@
 library(dplyr)
 
 
-setwd("C:/Users/ASUS/Documents/Edson/Servicio Social/Repositorio/")
 # NOTA: datos_unidos.csv fue reemplazado por la base corregida (n=49, sin los
 # falsos duplicados). Los resultados diferirán de los del reporte original.
 du <- read.csv("resultados/datos_unidos_corregido.csv",

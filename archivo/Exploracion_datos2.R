@@ -12,7 +12,6 @@ library(dplyr)
 # para mantener compatibilidad con el entorno de ejecución.
 # En un entorno con readxl instalado, usar:
 
-setwd("C:/Users/ASUS/Documents/Edson/Servicio Social/Repositorio/")
 df <- readxl::read_excel("data/Mediciones_Estatura.xlsx", sheet = "Editado")
 
 # df <- read.csv("/home/claude/mediciones.csv", stringsAsFactors = FALSE, check.names = FALSE)
