@@ -79,6 +79,44 @@ fuentes de la Etapa 3.
    `resultados/estimaciones_130.csv` y las pruebas en consola de
    `Analisis_demografico_130.R`.
 
+### Eficacia de Carrea por observador individual
+
+`Analisis_por_observador_130.R` aplica Carrea (cuerda medida, k=30*pi) con las
+mediciones de **cada observador por separado** (sin promediar entre ellos, a
+diferencia del resto de la Etapa 4) y compara la precision resultante contra la
+base promediada -> `resultados/precision_por_observador_130.csv`,
+`reporte/figuras/aciertos130_bracket_O1/O2/O3_H3_H4.png` (bracket individual,
+mismo formato que `aciertos130_bracket_H3_H4.png`) y
+`reporte/figuras/comparacion130_precision_observadores.png`.
+
+| | H3 precision | H3 rmse | H4 precision | H4 rmse |
+|---|---|---|---|---|
+| O1 | 25.3% | 0.1327 | 32.3% | 0.1273 |
+| O2 | 23.2% | 0.1253 | 34.2% | 0.1203 |
+| O3 | 23.0% | 0.1416 | 28.6% | 0.1282 |
+| **Promedio** | 23.0% | 0.1314 | 32.1% | 0.1218 |
+
+**O1 y O2 superan al promedio en precision en ambas hemiarcadas**, pero los
+margenes son pequenos (+0.2 a +2.3 puntos porcentuales, n~99-113) y podrian no
+ser estadisticamente significativos. **O2 es el candidato mas solido**: es el
+unico que ademas tiene **menor RMSE que el promedio en H3 Y H4 simultaneamente**
+(O1 tiene peor RMSE que el promedio en H4 pese a su precision ligeramente mayor).
+Por eso se replico el pipeline completo de Carrea (cuerda geometrica, aciertos,
+demografia, analisis inferencial) usando solo los datos de O2:
+`Cuerda_geometrica_130_O2.R`, `Analisis_aciertos_130_O2.R`,
+`Analisis_demografico_130_O2.R`, `Etapa_4_O2.R` (mismo orden y logica que sus
+equivalentes sin sufijo, leyendo `resultados/datos_130_observadores.csv` filtrado
+a `Evaluador == 2`). **Estos 4 scripts se prepararon pero no se ejecutaron** -
+sus salidas (`resultados/*_O2.csv`, `reporte/figuras/*_O2_*.png`) se generan
+corriendo:
+
+```r
+source("Cuerda_geometrica_130_O2.R")
+source("Analisis_aciertos_130_O2.R")
+source("Analisis_demografico_130_O2.R")
+source("Etapa_4_O2.R")
+```
+
 ### Pipeline (raiz del repositorio)
 
 | Script | Funcion -> Salida |
@@ -90,6 +128,8 @@ fuentes de la Etapa 3.
 | `Analisis_aciertos_130.R` | Que distingue a los individuos con estimacion correcta (regresion logistica, cociente cuerda/arco) |
 | `Analisis_demografico_130.R` | Demografia (sexo, edad, estatura, origen) de aciertos vs fallos |
 | `Etapa_4.R` | Analisis inferencial completo: normalidad, correlacion arco-cuerda, Carrea (medida vs geometrica), k optimo, regresiones, dimorfismo sexual -> `resultados/resultados_carrea_130.csv`, `resultados/k_optimo_130.csv` |
+| `Analisis_por_observador_130.R` | Eficacia de Carrea usando cada observador por separado (sin promediar) vs la base promediada -> `resultados/precision_por_observador_130.csv` |
+| `Cuerda_geometrica_130_O2.R`, `Analisis_aciertos_130_O2.R`, `Analisis_demografico_130_O2.R`, `Etapa_4_O2.R` | Replica del pipeline de Carrea (no de la union ni de la confiabilidad) usando solo las mediciones del Observador 2 -> `resultados/*_O2.csv` |
 
 Reproducir en orden:
 
@@ -100,6 +140,13 @@ source("Cuerda_geometrica_130.R")
 source("Analisis_aciertos_130.R")
 source("Analisis_demografico_130.R")
 source("Etapa_4.R")
+source("Analisis_por_observador_130.R")
+
+# Opcional: replica del analisis solo para el Observador 2 (ver arriba)
+source("Cuerda_geometrica_130_O2.R")
+source("Analisis_aciertos_130_O2.R")
+source("Analisis_demografico_130_O2.R")
+source("Etapa_4_O2.R")
 ```
 
 ### Graficas (`reporte/figuras/`)
@@ -115,6 +162,8 @@ correspondiente, agrupadas por prefijo:
 | `aciertos130_*` | `Analisis_aciertos_130.R` | Probabilidad de acierto (regresion logistica), cociente cuerda/arco en aciertos vs fallos, rango de Carrea vs estatura real |
 | `demo130_*` | `Analisis_demografico_130.R` | Tasa de acierto por sexo y origen, estatura/edad en aciertos vs fallos |
 | `etapa4_*` | `Etapa_4.R` | Normalidad (Q-Q + histograma), correlacion arco-cuerda, hallazgo central (Carrea vs estatura real), precision medida vs geometrica, k optimo, R2 de los modelos, dimorfismo sexual |
+| `aciertos130_bracket_O1/O2/O3_*`, `comparacion130_*` | `Analisis_por_observador_130.R` | Rango de Carrea vs estatura real por observador individual, precision por observador vs promedio |
+| `geo130_O2_*`, `aciertos130_O2_*`, `demo130_O2_*`, `etapa4_O2_*` | `*_O2.R` | Mismas graficas que sus equivalentes sin sufijo, replicadas solo con datos del Observador 2 |
 
 ### Decisiones de limpieza (ver comentarios en `Union_datos130.R`)
 
@@ -159,6 +208,11 @@ con una muestra mayor (ver hallazgo 1 arriba).
 ├── Analisis_aciertos_130.R   # que distingue a los aciertos
 ├── Analisis_demografico_130.R # demografia de aciertos vs fallos
 ├── Etapa_4.R                 # analisis inferencial completo
+├── Analisis_por_observador_130.R  # eficacia de Carrea por observador individual vs promedio
+├── Cuerda_geometrica_130_O2.R     # replica del pipeline de Carrea solo con datos del Observador 2
+├── Analisis_aciertos_130_O2.R     # (idem)
+├── Analisis_demografico_130_O2.R  # (idem)
+├── Etapa_4_O2.R                   # (idem)
 ├── data/
 │   ├── Datos_estatura130.xlsx        # fuente de la Etapa 4 (130 individuos, 3 observadores)
 │   ├── Mediciones_Estatura.csv       # fuente de la Etapa 3 (41 individuos)
@@ -173,6 +227,8 @@ con una muestra mayor (ver hallazgo 1 arriba).
 │   ├── estimaciones_130.csv          # Etapa 4, Carrea por individuo y hemiarcada
 │   ├── resultados_carrea_130.csv     # Etapa 4, tabla resumen
 │   ├── k_optimo_130.csv              # Etapa 4, k ajustado por minimos cuadrados
+│   ├── precision_por_observador_130.csv  # precision por observador individual vs promedio
+│   ├── *_O2.csv                      # replica del pipeline de Carrea solo con datos del Observador 2 (sin ejecutar aun)
 │   └── *_corregido.csv, *.csv        # salidas de la Etapa 3 (archivada)
 ├── reporte/                  # documento de la Etapa 3 + figuras de ambas etapas
 │   ├── Etapa3_ProyectoII.tex / .pdf
