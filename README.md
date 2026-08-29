@@ -106,9 +106,7 @@ demografia, analisis inferencial) usando solo los datos de O2:
 `Cuerda_geometrica_130_O2.R`, `Analisis_aciertos_130_O2.R`,
 `Analisis_demografico_130_O2.R`, `Etapa_4_O2.R` (mismo orden y logica que sus
 equivalentes sin sufijo, leyendo `resultados/datos_130_observadores.csv` filtrado
-a `Evaluador == 2`). **Estos 4 scripts se prepararon pero no se ejecutaron** -
-sus salidas (`resultados/*_O2.csv`, `reporte/figuras/*_O2_*.png`) se generan
-corriendo:
+a `Evaluador == 2`):
 
 ```r
 source("Cuerda_geometrica_130_O2.R")
@@ -116,6 +114,34 @@ source("Analisis_aciertos_130_O2.R")
 source("Analisis_demografico_130_O2.R")
 source("Etapa_4_O2.R")
 ```
+
+#### Resultados de la replica con O2
+
+1. **El hallazgo central (arco~estatura controlando sexo) se replica casi
+   identico usando solo O2**, sin promediar: `estatura ~ arco + sexo` da R2
+   ajustada 0.388 (H3) y 0.374 (H4), p_arco = 0.012 en H3 (identico al
+   promedio) y 0.045 en H4 (vs 0.034 del promedio) - refuerza que el hallazgo
+   1 de la Etapa 4 no es un artefacto de promediar entre observadores.
+   `estatura ~ cuerda_geometrica + sexo` es aun mas significativo
+   (p=0.0041 en H3, p=0.0140 en H4) que con arco.
+2. **La precision con O2 (cuerda medida) es ligeramente mejor que el
+   promedio** (H3: 23.2% vs 23.0%; H4: 34.2% vs 32.1%), pero la cuerda
+   geometrica ya no ayuda de forma pareja: mejora H3 (23.2% -> 26.8%,
+   0 casos imposibles) pero **empeora notablemente H4** (34.2% -> 25.2%),
+   a diferencia del promedio general donde medida y geometrica quedaban
+   cerca en H4 (32.1% vs 30.4%).
+3. **El k optimo tampoco es consistente con datos de O2**: mejora la
+   precision en H3 (ambas cuerdas) y en H4-geometrica, pero **empeora
+   H4-medida** (34.2% -> 31.5%) - el mismo patron de inconsistencia que con
+   el promedio (confirma el hallazgo 3 de la Etapa 4).
+4. **El acierto sigue ligado al cociente cuerda/arco**, no a un rasgo
+   biologico: en la regresion logistica `ratio` es el unico predictor
+   significativo (p=2.0e-9); Estatura, Sexo y hemiarcada no lo son.
+5. Con cuerda geometrica, a nivel persona **los aciertos tienen estatura
+   real mayor que los fallos** (1.633 m vs 1.601 m, Wilcoxon p=0.027) -
+   coincide con el hallazgo 5 de la Etapa 4 general.
+6. El **dimorfismo sexual es identico** (12.4 cm, p<0.0001): no depende del
+   observador, como se espera de un dato puramente demografico.
 
 ### Pipeline (raiz del repositorio)
 
@@ -228,7 +254,7 @@ con una muestra mayor (ver hallazgo 1 arriba).
 │   ├── resultados_carrea_130.csv     # Etapa 4, tabla resumen
 │   ├── k_optimo_130.csv              # Etapa 4, k ajustado por minimos cuadrados
 │   ├── precision_por_observador_130.csv  # precision por observador individual vs promedio
-│   ├── *_O2.csv                      # replica del pipeline de Carrea solo con datos del Observador 2 (sin ejecutar aun)
+│   ├── *_O2.csv                      # replica del pipeline de Carrea solo con datos del Observador 2
 │   └── *_corregido.csv, *.csv        # salidas de la Etapa 3 (archivada)
 ├── reporte/                  # documento de la Etapa 3 + figuras de ambas etapas
 │   ├── Etapa3_ProyectoII.tex / .pdf
